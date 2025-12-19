@@ -12,19 +12,29 @@ function Login() {
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+  e.preventDefault()
+  setLoading(true)
 
-    try {
-      await login({ email, password })
-      toast.success('Login successful!')
-      navigate('/')
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed')
-    } finally {
-      setLoading(false)
+  try {
+    await login({ email, password })
+    toast.success('Login successful!')
+    navigate('/')
+  } catch (error) {
+    if (error.response?.data) {
+      const errorData = error.response.data
+      
+      if (errorData.message) {
+        toast.error(errorData. message)
+      } else {
+        toast.error('Login failed. Please check your credentials.')
+      }
+    } else {
+      toast.error('Network error. Please try again.')
     }
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

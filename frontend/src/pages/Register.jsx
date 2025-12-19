@@ -23,27 +23,49 @@ function Register() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+  e.preventDefault()
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match')
-      return
-    }
-
-    setLoading(true)
-
-    try {
-      const { confirmPassword, ...userData } = formData
-      console.log('Sending data:', userData)  
-      await register(userData)
-      toast.success('Registration successful!')
-      navigate('/')
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed')
-    } finally {
-      setLoading(false)
-    }
+  if (formData.password !== formData. confirmPassword) {
+    toast.error('Passwords do not match')
+    return
   }
+
+  setLoading(true)
+
+  try {
+    const { confirmPassword, ...userData } = formData
+    await register(userData)
+    toast.success('Registration successful!')
+    navigate('/')
+  } catch (error) {
+    if (error.response?. data) {
+      const errorData = error.response.data
+      
+      if (errorData.message) {
+        toast.error(errorData.message)
+      }
+      
+      else if (errorData.errors) {
+        const firstError = Object.values(errorData.errors)[0]
+        toast.error(firstError)
+      }
+      
+      else if (errorData.fieldErrors) {
+        errorData.fieldErrors. forEach(fieldError => {
+          toast.error(`${fieldError.field}: ${fieldError.message}`)
+        })
+      }
+      
+      else {
+        toast.error('Registration failed. Please check your input.')
+      }
+    } else {
+      toast.error('Network error. Please try again.')
+    }
+  } finally {
+    setLoading(false)
+  }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

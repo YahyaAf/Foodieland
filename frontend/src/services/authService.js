@@ -8,10 +8,10 @@ export const authService = {
 
   login: async (credentials) => {
     const response = await axiosInstance.post('/auth/login', credentials)
-    return response. data
+    return response.data
   },
 
-  logout:  async () => {
+  logout: async () => {
     const response = await axiosInstance.post('/auth/logout')
     return response.data
   },
