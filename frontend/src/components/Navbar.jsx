@@ -33,6 +33,14 @@ function Navbar() {
             >
               Home
             </Link>
+
+            <Link 
+              to="/recipes" 
+              className="text-gray-700 hover:text-blue-600 font-medium"
+            >
+              Recipes
+            </Link>
+
             <Link 
               to="/categories" 
               className="text-gray-700 hover:text-blue-600 font-medium"
@@ -40,15 +48,8 @@ function Navbar() {
               Categories
             </Link>
 
-            {user ?  (
+            {user ? (
               <>
-                <Link 
-                  to="/dashboard" 
-                  className="text-gray-700 hover:text-blue-600 font-medium"
-                >
-                  Dashboard
-                </Link>
-
                 <div className="flex items-center space-x-4">
                   <span className="text-gray-700">
                     👤 {user.username}
