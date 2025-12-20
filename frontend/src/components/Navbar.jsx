@@ -33,6 +33,12 @@ function Navbar() {
             >
               Home
             </Link>
+            <Link 
+              to="/categories" 
+              className="text-gray-700 hover:text-blue-600 font-medium"
+            >
+              Categories
+            </Link>
 
             {user ?  (
               <>
