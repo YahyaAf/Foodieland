@@ -11,7 +11,7 @@ export const recipeService = {
       if (filters.authorId) params.append('authorId', filters.authorId)
       
       const queryString = params.toString()
-      const url = queryString ? `/recipes? ${queryString}` : '/recipes'
+      const url = queryString ? `/recipes?${queryString}` : '/recipes'
       
       const response = await axiosInstance.get(url)
       return response.data
@@ -62,7 +62,7 @@ export const recipeService = {
       toast.success('Recipe updated successfully!')
       return response.data
     } catch (error) {
-      if (error.response?. data) {
+      if (error.response?.data) {
         const errorData = error.response.data
         
         if (errorData.message) {
@@ -90,9 +90,9 @@ export const recipeService = {
     }
   },
 
-  searchRecipes:  async (searchTerm) => {
+  searchRecipes: async (searchTerm) => {
     try {
-      const response = await axiosInstance.get(`/recipes? search=${searchTerm}`)
+      const response = await axiosInstance.get(`/recipes?search=${searchTerm}`)
       return response.data
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Search failed'
@@ -106,7 +106,7 @@ export const recipeService = {
       const response = await axiosInstance.get(`/recipes?categoryId=${categoryId}`)
       return response.data
     } catch (error) {
-      const errorMessage = error.response?. data?.message || 'Failed to filter recipes'
+      const errorMessage = error.response?.data?.message || 'Failed to filter recipes'
       toast.error(errorMessage)
       throw error
     }
@@ -117,7 +117,7 @@ export const recipeService = {
       const response = await axiosInstance.get(`/recipes?authorId=${authorId}`)
       return response.data
     } catch (error) {
-      const errorMessage = error. response?.data?.message || 'Failed to filter recipes'
+      const errorMessage = error.response?.data?.message || 'Failed to filter recipes'
       toast.error(errorMessage)
       throw error
     }

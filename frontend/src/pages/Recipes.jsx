@@ -58,7 +58,7 @@ function Recipes() {
   }
 
   const handleMyRecipesToggle = () => {
-    setShowMyRecipes(! showMyRecipes)
+    setShowMyRecipes(!showMyRecipes)
   }
 
   useEffect(() => {
@@ -91,7 +91,7 @@ function Recipes() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-          <div className="grid grid-cols-1 md: grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             
             <form onSubmit={handleSearch} className="md:col-span-2">
               <div className="flex gap-2">
@@ -99,7 +99,7 @@ function Recipes() {
                   type="text"
                   placeholder="Search recipes..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target. value)}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
@@ -115,7 +115,7 @@ function Recipes() {
               <select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
-                className="w-full px-4 py-2 border rounded-lg focus: outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Categories</option>
                 {categories.map((category) => (
