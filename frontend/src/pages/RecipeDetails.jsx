@@ -1,13 +1,11 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { recipeService } from '../services/recipeService'
-import { AuthContext } from '../context/AuthContext'
-import { FaClock, FaUtensils, FaUser, FaEdit, FaTrash, FaArrowLeft, FaTag } from 'react-icons/fa'
+import { FaClock, FaUtensils, FaUser, FaArrowLeft, FaTag } from 'react-icons/fa'
 
 function RecipeDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user } = useContext(AuthContext)
   
   const [recipe, setRecipe] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -28,25 +26,6 @@ function RecipeDetails() {
       setLoading(false)
     }
   }
-
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this recipe?')) {
-      try {
-        await recipeService.deleteRecipe(id)
-        navigate('/recipes')
-      } catch (error) {
-        console.error('Error deleting recipe:', error)
-      }
-    }
-  }
-
-  const isAuthor = user && recipe && String(user.id) === String(recipe.author?.id)
-
-  console.log('Auth Check:', {
-    userId: user?.id,
-    authorId: recipe?.author?.id,
-    isAuthor
-  })
 
   if (loading) {
     return (
@@ -167,23 +146,6 @@ function RecipeDetails() {
                 {recipe.description || 'No description available. '}
               </p>
             </div>
-
-            {isAuthor && (
-              <div className="flex gap-4 pt-6 border-t">
-                <Link
-                  to={`/recipes/edit/${recipe.id}`}
-                  className="flex-1 bg-yellow-500 text-white py-3 rounded-lg hover:bg-yellow-600 flex items-center justify-center gap-2 font-semibold"
-                >
-                  <FaEdit /> Edit Recipe
-                </Link>
-                <button
-                  onClick={handleDelete}
-                  className="flex-1 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 flex items-center justify-center gap-2 font-semibold"
-                >
-                  <FaTrash /> Delete Recipe
-                </button>
-              </div>
-            )}
 
             <div className="mt-6 pt-6 border-t text-sm text-gray-500">
               <p>

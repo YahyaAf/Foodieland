@@ -1,11 +1,14 @@
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Categories from './pages/Categories'
 import Recipes from './pages/Recipes'              
 import RecipeDetails from './pages/RecipeDetails'  
-import RecipeForm from './pages/RecipeForm'        
+import RecipeForm from './pages/RecipeForm'
+import Dashboard from './pages/Dashboard'
+import NotFound from './pages/NotFound'
 
 function App() {
   return (
@@ -15,11 +18,21 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/categories" element={<Categories />} />
+        
+        <Route path="/categories" element={
+          <ProtectedRoute requireAdmin={true}>
+            <Categories />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/dashboard" element={
+          <ProtectedRoute requireAdmin={true}>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
         
         <Route path="/recipes" element={<Recipes />} />
-        <Route path="/recipes/new" element={<RecipeForm />} />
-        <Route path="/recipes/edit/:id" element={<RecipeForm />} />
+        
         <Route path="/recipes/:id" element={<RecipeDetails />} />
         
         <Route path="/" element={
@@ -38,16 +51,12 @@ function App() {
                 >
                   Browse Recipes
                 </a>
-                <a
-                  href="/categories"
-                  className="bg-orange-500 text-white px-8 py-3 rounded-lg hover:bg-orange-600 font-semibold text-lg"
-                >
-                  Explore Categories
-                </a>
               </div>
             </div>
           </div>
         } />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   )

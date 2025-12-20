@@ -155,7 +155,7 @@ function Categories() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus: ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
@@ -167,7 +167,7 @@ function Categories() {
                     name="slug"
                     value={formData.slug}
                     onChange={handleChange}
-                    placeholder="example:  moroccan-dishes"
+                    placeholder="example: moroccan-dishes"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                     />

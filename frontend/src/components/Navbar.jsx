@@ -4,7 +4,7 @@ import { AuthContext } from '../context/AuthContext'
 import { toast } from 'react-toastify'
 
 function Navbar() {
-  const { user, logout } = useContext(AuthContext)
+  const { user, logout, loading } = useContext(AuthContext)
   const navigate = useNavigate()
 
   const handleLogout = async () => {
@@ -41,14 +41,11 @@ function Navbar() {
               Recipes
             </Link>
 
-            <Link 
-              to="/categories" 
-              className="text-gray-700 hover:text-blue-600 font-medium"
-            >
-              Categories
-            </Link>
-
-            {user ? (
+            {loading ? (
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : user ? (
               <>
                 <div className="flex items-center space-x-4">
                   <span className="text-gray-700">
