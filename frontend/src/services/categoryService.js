@@ -2,7 +2,7 @@ import axiosInstance from './axiosInstance'
 import { toast } from 'react-toastify'
 
 export const categoryService = {
-  getAllCategories:  async () => {
+  getAllCategories: async () => {
     try {
       const response = await axiosInstance.get('/categories')
       return response.data
@@ -15,10 +15,10 @@ export const categoryService = {
 
   getCategoryById: async (id) => {
     try {
-      const response = await axiosInstance. get(`/categories/${id}`)
+      const response = await axiosInstance.get(`/categories/${id}`)
       return response.data
     } catch (error) {
-      const errorMessage = error.response?. data?.message || 'Failed to fetch category'
+      const errorMessage = error.response?.data?.message || 'Failed to fetch category'
       toast.error(errorMessage)
       throw error
     }
@@ -30,7 +30,7 @@ export const categoryService = {
       toast.success('Category created successfully!')
       return response.data
     } catch (error) {
-      if (error. response?.data) {
+      if (error.response?.data) {
         const errorData = error.response.data
         
         if (errorData.message) {
