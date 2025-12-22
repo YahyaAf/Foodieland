@@ -407,7 +407,7 @@ This project is for educational purposes.
 
 ## 👥 Contributors
 
-- Your Name
+- Yahya afadisse
 
 ## 🤝 Contributing
 
@@ -419,7 +419,7 @@ This project is for educational purposes.
 
 ## 📞 Support
 
-For support, email your-email@example.com or create an issue in the repository.
+For support, email yahyaafadisse92@example.com or create an issue in the repository.
 
 ---
 
