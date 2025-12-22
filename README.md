@@ -419,7 +419,7 @@ This project is for educational purposes.
 
 ## 📞 Support
 
-For support, email yahyaafadisse92@example.com or create an issue in the repository.
+For support, email yahyaafadisse92@gmail.com or create an issue in the repository.
 
 ---
 
