@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 import { toast } from 'react-toastify'
@@ -8,8 +8,14 @@ function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   
-  const { login } = useContext(AuthContext)
+  const { login, user } = useContext(AuthContext)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (user) {
+      navigate('/', { replace: true })
+    }
+  }, [user, navigate])
 
   const handleSubmit = async (e) => {
   e.preventDefault()

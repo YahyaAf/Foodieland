@@ -41,12 +41,6 @@ function NotFound() {
           >
             <FaHome /> Go Home
           </Link>
-          <Link
-            to="/recipes"
-            className="bg-white text-gray-800 px-8 py-4 rounded-xl hover:bg-gray-100 transition transform hover:scale-105 flex items-center justify-center gap-2 text-lg font-semibold shadow-lg border-2 border-gray-200"
-          >
-            <FaSearch /> Browse Recipes
-          </Link>
         </div>
 
         <div className="mt-12">
