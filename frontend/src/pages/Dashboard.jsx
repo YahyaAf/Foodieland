@@ -3,11 +3,11 @@ import { Navigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 import { categoryService } from '../services/categoryService'
 import { recipeService } from '../services/recipeService'
-import { FaPlus, FaEdit, FaTrash, FaUsers, FaUtensils, FaTags } from 'react-icons/fa'
+import { FaPlus, FaEdit, FaTrash, FaUtensils, FaTags, FaSearch } from 'react-icons/fa'
 
 function Dashboard() {
   const { user, loading: authLoading } = useContext(AuthContext)
-  const [activeTab, setActiveTab] = useState('categories')
+  const [activeTab, setActiveTab] = useState('recipes')
   const [categories, setCategories] = useState([])
   const [recipes, setRecipes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -15,6 +15,7 @@ function Dashboard() {
   const [editMode, setEditMode] = useState(false)
   const [currentItem, setCurrentItem] = useState(null)
   const [formData, setFormData] = useState({})
+  const [searchTerm, setSearchTerm] = useState('')
 
   const fetchData = async () => {
     try {
@@ -127,300 +128,310 @@ function Dashboard() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 mb-8 text-white">
-          <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-blue-100">Manage your categories and recipes</p>
-        </div>
+  const filteredData = activeTab === 'categories' 
+    ? categories.filter(cat => cat.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    : recipes.filter(rec => rec.title.toLowerCase().includes(searchTerm.toLowerCase()))
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex gap-4 mb-6">
-            <button
-              onClick={() => setActiveTab('categories')}
-              className={`flex-1 py-4 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 transition ${
-                activeTab === 'categories'
-                  ? 'bg-blue-500 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <FaTags /> Categories
-            </button>
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="flex">
+        <aside className="w-64 bg-white h-screen sticky top-0 shadow-sm">
+          <div className="p-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Dashboard</h2>
+            <p className="text-sm text-gray-500">Hello {user?.username} 👋</p>
+          </div>
+          
+          <nav className="px-4">
             <button
               onClick={() => setActiveTab('recipes')}
-              className={`flex-1 py-4 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 transition ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition ${
                 activeTab === 'recipes'
-                  ? 'bg-purple-500 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-blue-50 text-blue-600 font-medium'
+                  : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
               <FaUtensils /> Recipes
             </button>
-          </div>
-
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
-              {activeTab === 'categories' ? 'Categories' : 'Recipes'}
-            </h2>
             <button
-              onClick={handleAddClick}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 flex items-center gap-2 shadow-lg"
+              onClick={() => setActiveTab('categories')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                activeTab === 'categories'
+                  ? 'bg-blue-50 text-blue-600 font-medium'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
             >
-              <FaPlus /> Add {activeTab === 'categories' ? 'Category' : 'Recipe'}
+              <FaTags /> Categories
             </button>
+          </nav>
+        </aside>
+
+        <main className="flex-1 p-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              {activeTab === 'recipes' ? 'All Recipes' : 'All Categories'}
+            </h1>
+            <p className="text-gray-500">
+              {filteredData.length} {activeTab === 'recipes' ? 'recipe' : 'categor'}{filteredData.length !== 1 ? (activeTab === 'recipes' ? 's' : 'ies') : 'y'} found
+            </p>
           </div>
 
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="text-2xl text-gray-600">Loading...</div>
+          <div className="bg-white rounded-xl shadow-sm">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 relative max-w-md">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <button
+                  onClick={handleAddClick}
+                  className="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition font-medium"
+                >
+                  <FaPlus /> Add New
+                </button>
+              </div>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-100 border-b-2 border-gray-200">
-                    <th className="px-6 py-4 text-left text-gray-700 font-semibold">
-                      {activeTab === 'categories' ? 'Name' : 'Title'}
-                    </th>
-                    {activeTab === 'categories' ? (
-                      <th className="px-6 py-4 text-left text-gray-700 font-semibold">Slug</th>
-                    ) : (
-                      <>
-                        <th className="px-6 py-4 text-left text-gray-700 font-semibold">Category</th>
-                        <th className="px-6 py-4 text-left text-gray-700 font-semibold">Author</th>
-                      </>
-                    )}
-                    <th className="px-6 py-4 text-right text-gray-700 font-semibold">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeTab === 'categories' ? (
-                    categories.length === 0 ? (
-                      <tr>
-                        <td colSpan="3" className="px-6 py-12 text-center text-gray-500">
-                          No categories found
-                        </td>
-                      </tr>
-                    ) : (
-                      categories.map((category) => (
-                        <tr key={category.id} className="border-b hover:bg-gray-50">
-                          <td className="px-6 py-4 font-medium text-gray-800">{category.name}</td>
-                          <td className="px-6 py-4 text-gray-600">{category.slug || '-'}</td>
-                          <td className="px-6 py-4 text-right">
-                            <button
-                              onClick={() => handleEditClick(category)}
-                              className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 mr-2"
-                            >
-                              <FaEdit />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(category.id)}
-                              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                            >
-                              <FaTrash />
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )
-                  ) : recipes.length === 0 ? (
+
+            {loading ? (
+              <div className="p-12 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading...</p>
+              </div>
+            ) : filteredData.length === 0 ? (
+              <div className="p-12 text-center">
+                <p className="text-gray-500 text-lg">
+                  {searchTerm ? 'No results found' : `No ${activeTab} yet`}
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <td colSpan="4" className="px-6 py-12 text-center text-gray-500">
-                        No recipes found
-                      </td>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        {activeTab === 'categories' ? 'Category Name' : 'Recipe Title'}
+                      </th>
+                      {activeTab === 'categories' ? (
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Slug</th>
+                      ) : (
+                        <>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Category</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                        </>
+                      )}
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                     </tr>
-                  ) : (
-                    recipes.map((recipe) => (
-                      <tr key={recipe.id} className="border-b hover:bg-gray-50">
-                        <td className="px-6 py-4 font-medium text-gray-800">{recipe.title}</td>
-                        <td className="px-6 py-4 text-gray-600">{recipe.category?.name || '-'}</td>
-                        <td className="px-6 py-4 text-gray-600">{recipe.author?.username || '-'}</td>
-                        <td className="px-6 py-4 text-right">
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredData.map((item) => (
+                      <tr key={item.id} className="hover:bg-gray-50 transition">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="font-medium text-gray-900">
+                            {activeTab === 'categories' ? item.name : item.title}
+                          </div>
+                        </td>
+                        {activeTab === 'categories' ? (
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                            {item.slug || '-'}
+                          </td>
+                        ) : (
+                          <>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                              {item.category?.name || '-'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Active
+                              </span>
+                            </td>
+                          </>
+                        )}
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <button
-                            onClick={() => handleEditClick(recipe)}
-                            className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 mr-2"
+                            onClick={() => handleEditClick(item)}
+                            className="text-blue-600 hover:text-blue-900 mr-4 inline-flex items-center gap-1"
                           >
-                            <FaEdit />
+                            <FaEdit /> Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(recipe.id)}
-                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                            onClick={() => handleDelete(item.id)}
+                            className="text-red-600 hover:text-red-900 inline-flex items-center gap-1"
                           >
-                            <FaTrash />
+                            <FaTrash /> Delete
                           </button>
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </main>
       </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-8">
-              <h2 className="text-3xl font-bold mb-6 text-gray-800">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4">
+              <h2 className="text-2xl font-bold text-gray-800">
                 {editMode ? 'Edit' : 'Add'} {activeTab === 'categories' ? 'Category' : 'Recipe'}
               </h2>
-
-              <form onSubmit={handleSubmit}>
-                {activeTab === 'categories' ? (
-                  <>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 mb-2 font-medium">Name *</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name || ''}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
-                    </div>
-                    <div className="mb-6">
-                      <label className="block text-gray-700 mb-2 font-medium">Slug *</label>
-                      <input
-                        type="text"
-                        name="slug"
-                        value={formData.slug || ''}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 mb-2 font-medium">Title *</label>
-                      <input
-                        type="text"
-                        name="title"
-                        value={formData.title || ''}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        required
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 mb-2 font-medium">Slug *</label>
-                      <input
-                        type="text"
-                        name="slug"
-                        value={formData.slug || ''}
-                        onChange={handleChange}
-                        placeholder="e.g., moroccan-tagine"
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        required
-                      />
-                      <p className="text-sm text-gray-500 mt-1">
-                        Use only lowercase letters, numbers, and hyphens
-                      </p>
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 mb-2 font-medium">Description *</label>
-                      <textarea
-                        name="description"
-                        value={formData.description || ''}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        rows="3"
-                        required
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 mb-2 font-medium">Image URL</label>
-                      <input
-                        type="url"
-                        name="imageUrl"
-                        value={formData.imageUrl || ''}
-                        onChange={handleChange}
-                        placeholder="https://example.com/image.jpg"
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                      <p className="text-sm text-gray-500 mt-1">
-                        Optional: Add an image URL for your recipe
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="block text-gray-700 mb-2 font-medium">Category *</label>
-                        <select
-                          name="categoryId"
-                          value={formData.categoryId || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          required
-                        >
-                          <option value="">Select Category</option>
-                          {categories.map((cat) => (
-                            <option key={cat.id} value={cat.id}>
-                              {cat.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 mb-2 font-medium">Servings *</label>
-                        <input
-                          type="number"
-                          name="servings"
-                          value={formData.servings || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="block text-gray-700 mb-2 font-medium">Prep Time (min) *</label>
-                        <input
-                          type="number"
-                          name="prepTime"
-                          value={formData.prepTime || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 mb-2 font-medium">Cook Time (min) *</label>
-                        <input
-                          type="number"
-                          name="cookTime"
-                          value={formData.cookTime || ''}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <div className="flex gap-4">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 font-semibold"
-                  >
-                    {editMode ? 'Update' : 'Create'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 font-semibold"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
             </div>
+
+            <form onSubmit={handleSubmit} className="p-6">
+              {activeTab === 'categories' ? (
+                <>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name || ''}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Slug *</label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formData.slug || ''}
+                      onChange={handleChange}
+                      placeholder="e.g., moroccan-dishes"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Use lowercase letters, numbers, and hyphens</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formData.title || ''}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Slug *</label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formData.slug || ''}
+                      onChange={handleChange}
+                      placeholder="e.g., moroccan-tagine"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                    <textarea
+                      name="description"
+                      value={formData.description || ''}
+                      onChange={handleChange}
+                      rows="3"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                    <input
+                      type="url"
+                      name="imageUrl"
+                      value={formData.imageUrl || ''}
+                      onChange={handleChange}
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                      <select
+                        name="categoryId"
+                        value={formData.categoryId || ''}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Servings *</label>
+                      <input
+                        type="number"
+                        name="servings"
+                        value={formData.servings || ''}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Prep Time (min) *</label>
+                      <input
+                        type="number"
+                        name="prepTime"
+                        value={formData.prepTime || ''}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Cook Time (min) *</label>
+                      <input
+                        type="number"
+                        name="cookTime"
+                        value={formData.cookTime || ''}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="submit"
+                  className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 font-medium transition"
+                >
+                  {editMode ? 'Update' : 'Create'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-lg hover:bg-gray-200 font-medium transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
